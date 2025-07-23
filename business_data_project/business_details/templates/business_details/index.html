@@ -1,7 +1,21 @@
-
-<table>
-{% for company in companies %}
-<tr>
-    <td>{{company.full_name}}</td>
-</tr>
-{% endfor %}
+{% extends "business_details/base.html" %}
+{% block content%}
+<div style="padding: 20vh 10vw">
+  <div class="container d-flex justify-content-center">
+    <div class="card mt-5 p-4">
+      <span class="text mb-4">Search for company using KRS</span>
+      <form method="get" action="{% url 'company-search'%}">
+        <div class="input-group mb-3">
+          <input type="text" name="search_entry", class="form-control", placeholder="0000543759",  required>
+          <div class="input-group-append">
+            <button class="btn btn-primary", type="submit">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+      </div>
+    </div>	
+  </div>
+</div>
+{% endblock %}

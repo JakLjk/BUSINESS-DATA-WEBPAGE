@@ -1,0 +1,112 @@
+{% extends "business_details/base.html" %}
+
+{% block content %}
+<div class="container py-5" style="background-color:rgb(245, 245, 245); border-radius: 1rem;">
+  
+  <div class="mb-4 text-center">
+    <h2 class="fw-bold text-primary">Documents for {{ company.full_name }}</h2>
+    <p class="text-muted">Select one or more documents to download</p>
+  </div>
+
+  <form method="post" id="download-form">
+    {% csrf_token %}
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <div class="mb-3 text-end">
+            <button type="button" id="select-all-btn" class="btn btn-outline-secondary btn-sm rounded-pill">
+              Select All
+            </button>
+        </div>
+        <div class="list-group" id="document-list">
+          {% for doc in documents %}
+          <div 
+            class="list-group-item rounded-3 mb-2 d-flex justify-content-between align-items-center doc-row"
+            data-doc-id="{{ doc.id }}"
+          >
+            <input 
+              type="checkbox" 
+              name="doc_ids" 
+              value="{{ doc.id }}" 
+              class="hidden-checkbox"
+              style="display: none;"
+            >
+            <span>{{ doc.name }}</span>
+            <small class="text-muted">Uploaded on: {{ doc.uploaded_at|date:"Y-m-d" }}</small>
+          </div>
+          {% empty %}
+          <p class="text-center text-muted">No documents available.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Download Button -->
+    <div class="row mt-4 justify-content-center">
+      <div class="col-md-6 text-center">
+        <button 
+          type="submit" 
+          class="btn btn-success btn-lg rounded-pill shadow-sm px-5" 
+          id="download-btn" 
+          disabled
+        >
+          Download Selected
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<style>
+  .doc-row {
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+  }
+  .doc-row.selected {
+    background-color: #dff5e1 !important; /* soft green tint */
+  }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const docRows = document.querySelectorAll(".doc-row");
+      const downloadBtn = document.getElementById("download-btn");
+      const selectAllBtn = document.getElementById("select-all-btn");
+  
+      function updateButtonState() {
+        const anyChecked = document.querySelectorAll(".hidden-checkbox:checked").length > 0;
+        downloadBtn.disabled = !anyChecked;
+      }
+  
+      docRows.forEach(row => {
+        row.addEventListener("click", function () {
+          const checkbox = this.querySelector("input[type='checkbox']");
+          checkbox.checked = !checkbox.checked;
+          this.classList.toggle("selected", checkbox.checked);
+          updateButtonState();
+          updateSelectAllButton();  // Check if all are now selected
+        });
+      });
+  
+      // Select All / Deselect All logic
+      selectAllBtn.addEventListener("click", function () {
+        const allSelected = Array.from(docRows).every(row => row.querySelector("input").checked);
+        docRows.forEach(row => {
+          const checkbox = row.querySelector("input[type='checkbox']");
+          checkbox.checked = !allSelected;
+          row.classList.toggle("selected", !allSelected);
+        });
+        updateButtonState();
+        updateSelectAllButton();
+      });
+  
+      function updateSelectAllButton() {
+        const allSelected = Array.from(docRows).every(row => row.querySelector("input").checked);
+        selectAllBtn.textContent = allSelected ? "Deselect All" : "Select All";
+      }
+  
+      updateButtonState();
+      updateSelectAllButton();
+    });
+  </script>
+  
+{% endblock %}
