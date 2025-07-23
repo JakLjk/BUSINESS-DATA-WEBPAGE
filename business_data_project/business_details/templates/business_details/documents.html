@@ -4,55 +4,72 @@
 <div class="container py-5" style="background-color:rgb(245, 245, 245); border-radius: 1rem;">
   
   <div class="mb-4 text-center">
-    <h2 class="fw-bold text-primary">Documents for {{ company.full_name }}</h2>
+    <h2 class="fw-bold text-primary"> {{ company.full_name }}</h2>
     <p class="text-muted">Select one or more documents to download</p>
   </div>
 
   <form method="post" id="download-form">
     {% csrf_token %}
-    <div class="row justify-content-center">
-      <div class="col-md-10">
-        <div class="mb-3 text-end">
-            <button type="button" id="select-all-btn" class="btn btn-outline-secondary btn-sm rounded-pill">
-              Select All
-            </button>
+    
+    <div class="row justify-content-between align-items-center mb-3">
+        <div class="col-auto">
+          <button type="button" id="select-all-btn" class="btn btn-outline-secondary btn-sm rounded-pill">
+            Select All
+          </button>
         </div>
+        <div class="col-auto">
+          <button 
+            type="submit" 
+            class="btn btn-success btn-sm rounded-pill shadow-sm px-4" 
+            id="download-btn-top" 
+            disabled>
+            Download Selected
+          </button>
+        </div>
+      </div>
         <div class="list-group" id="document-list">
           {% for doc in documents %}
           <div 
-            class="list-group-item rounded-3 mb-2 d-flex justify-content-between align-items-center doc-row"
-            data-doc-id="{{ doc.id }}"
-          >
+            class="list-group-item rounded-3 mb-2 doc-row"
+            data-doc-id="{{ doc.hash_id }}">
             <input 
               type="checkbox" 
               name="doc_ids" 
-              value="{{ doc.id }}" 
+              value="{{ doc.hash_id }}" 
               class="hidden-checkbox"
               style="display: none;"
             >
-            <span>{{ doc.name }}</span>
-            <small class="text-muted">Uploaded on: {{ doc.uploaded_at|date:"Y-m-d" }}</small>
+            <!-- First line: document name -->
+            <div class="fw-semibold">
+                {{ doc.document_type }}
+            </div>
+
+            <!-- Second line: date range -->
+            <div class="text-muted" style="font-size: 0.9rem;">
+                Data od: {{ doc.document_date_from}} &nbsp;&nbsp; Data do: {{ doc.document_date_to}}
+            </div>
+            <small class="text-muted"> Plik: '{{ doc.document_content_save_name }}'</small>
           </div>
           {% empty %}
           <p class="text-center text-muted">No documents available.</p>
           {% endfor %}
+            <!-- Download Button -->
+            <div class="row mt-5">
+                <div class="col text-center">
+                <button 
+                    type="submit" 
+                    class="btn btn-success btn-lg rounded-pill shadow px-5" 
+                    id="download-btn-bottom" 
+                    disabled>
+                    Download Selected
+                </button>
+                </div>
+            </div>
         </div>
       </div>
     </div>
 
-    <!-- Download Button -->
-    <div class="row mt-4 justify-content-center">
-      <div class="col-md-6 text-center">
-        <button 
-          type="submit" 
-          class="btn btn-success btn-lg rounded-pill shadow-sm px-5" 
-          id="download-btn" 
-          disabled
-        >
-          Download Selected
-        </button>
-      </div>
-    </div>
+
   </form>
 </div>
 
@@ -69,12 +86,15 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
       const docRows = document.querySelectorAll(".doc-row");
-      const downloadBtn = document.getElementById("download-btn");
+      const downloadBtns = [
+      document.getElementById("download-btn-top"),
+      document.getElementById("download-btn-bottom")
+      ];
       const selectAllBtn = document.getElementById("select-all-btn");
   
       function updateButtonState() {
         const anyChecked = document.querySelectorAll(".hidden-checkbox:checked").length > 0;
-        downloadBtn.disabled = !anyChecked;
+        downloadBtns.forEach(btn=> btn.disabled = !anyChecked);
       }
   
       docRows.forEach(row => {
