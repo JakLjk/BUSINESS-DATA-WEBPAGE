@@ -36,6 +36,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'busers.apps.UsersConfig',
     'business_details.apps.BusinessDetailsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
