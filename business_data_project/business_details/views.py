@@ -11,11 +11,12 @@ from .models import CompanyInfo, KrsDfDocuments
 def index(request):
     return render(request, "business_details/index.html")
 
+
 def search_results(request):
     context = {}
     search_entry = request.GET.get("search_entry")
     try:
-        context["companies"] = CompanyInfo.objects.using("data").filter(
+        queryset = CompanyInfo.objects.using("data").filter(
             Q(krs_number__icontains=search_entry)
             |
             Q(full_name__icontains=search_entry)
@@ -25,13 +26,13 @@ def search_results(request):
             Q(regon_number__icontains=search_entry)
             ,
             is_current=True
-
         )
+        context["count_companies"] = queryset.count()
+        context["companies"] = queryset[:100]
 
         return render(request, "business_details/search.html", context)
     except:
         return HttpResponse(f"Not found - {search_entry}")
-
 
 
 def details(request, company_id):
@@ -69,11 +70,9 @@ def documents(request, company_id):
                         doc["document_content"])
             zip_buffer.seek(0)
             response = HttpResponse(zip_buffer, content_type="application/zip")
-            response["Content-Disposition"] = 'attachment; filename="documents.zip"'
+            response["Content-Disposition"] = f'attachment; filename="documents_{company.krs_number}.zip"'
             return response
-
-
-
+        
     documents = (KrsDfDocuments
                            .objects
                            .using("data")

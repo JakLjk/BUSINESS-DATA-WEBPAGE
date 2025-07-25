@@ -1,0 +1,9 @@
+.border-curved {
+  border-radius: 2rem !important;
+}
+
+.doc-row.selected {
+  background-color: #e0f2ff; /* light blue tint */
+  border: 2px solid #3b82f6; /* blue border */
+  transition: all 0.2s ease-in-out;
+}

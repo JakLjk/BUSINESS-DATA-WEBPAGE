@@ -1,37 +1,54 @@
 {% extends "business_details/base.html" %}
 
 {% block content %}
-<div class="container py-5" style="background-color:rgb(235, 235, 235); border-radius: 1rem;">
+<div class="container py-5">
 
   <!-- Company Name -->
-  <div class="mb-5 text-center" >
-    <h2 class="fw-bold text-primary">{{ company.full_name }}</h2>
+  <div class="row mb-5 justify-content-center">
+    <div class="col-md-12">
+      <div class="card border-0 rounded-4 p-4 border-curved">
+        <h2 class="fw-bold text-center mb-0" style="text-shadow: 0 1px 2px rgba(0,0,0,0.4);">
+          <a 
+            href="{% url 'company-details' company.id %}" 
+            class="text-primary text-decoration-none">
+            {{ company.full_name }}
+          </a>
+        </h2>
+      </div>
+    </div>
   </div>
-
   <!-- First row: 3 boxes side-by-side -->
   <div class="row g-4">
 
     <!-- Box 1: KRS + REGON + NIP -->
     <div class="col-md-4">
-      <div class="card shadow-sm border-0 rounded-4 h-100">
+      <div class="card shadow-sm border-0 rounded-4 h-100 border-curved">
         <div class="card-body">
-          <h6 class="text-uppercase text-muted mb-3">Identyfikacja</h6>
+          <h5 
+            class="text-uppercase fw-semibold mb-3" 
+            style="text-shadow: 0 1px 2px rgba(0,0,0,0.4);">
+            Identification
+          </h5>
           <p class="mb-2"><strong>KRS:</strong> {{ company.krs_number }}</p>
+          <p class="mb-2"><strong>NIP:</strong> {{ company.nip_number }}</p>
           <p class="mb-2"><strong>REGON:</strong> {{ company.regon_number }}</p>
-          <p class="mb-0"><strong>NIP:</strong> {{ company.nip_number }}</p>
         </div>
       </div>
     </div>
 
     <!-- Box 2: Address -->
     <div class="col-md-4">
-      <div class="card shadow-sm border-0 rounded-4 h-100">
+      <div class="card shadow-sm border-0 rounded-4 h-100 border-curved">
         <div class="card-body">
-          <h6 class="text-uppercase text-muted mb-3">Adres</h6>
+          <h5 
+            class="text-uppercase fw-semibold mb-3" 
+            style="text-shadow: 0 1px 2px rgba(0,0,0,0.4);">
+            Location
+          </h5>
           <p class="mb-2 fw-bold">
-            <p class="mb-2"><strong>Kraj:</strong> {{ company.country }}</p>
-            <p class="mb-2"><strong>Miasto:</strong> {{ company.city }} {{company.zip_code}}</p>
-            <p class="mb-0"><strong>Ulica:</strong> {{ company.street }} / {{company.house_number}}</p>
+            <p class="mb-2"><strong>Country:</strong> {{ company.country }}</p>
+            <p class="mb-2"><strong>City:</strong> {{ company.city }} {{company.zip_code}}</p>
+            <p class="mb-0"><strong>Street:</strong> {{ company.street }} / {{company.house_number}}</p>
           </p>
         </div>
       </div>
@@ -39,11 +56,16 @@
 
     <!-- Box 3: Status -->
     <div class="col-md-4">
-      <div class="card shadow-sm border-0 rounded-4 h-100">
+      <div class="card shadow-sm border-0 rounded-4 h-100 border-curved">
         <div class="card-body">
-          <h6 class="text-uppercase text-muted mb-3">Rejestr Dokumentów</h6>
+          <h5 
+            class="text-uppercase fw-semibold mb-3" 
+            style="text-shadow: 0 1px 2px rgba(0,0,0,0.4);">
+            Financial statements
+          </h5>
           <p class="mb-0"><strong>Available documents:</strong> {{ financial_documents_count }}</p>
-          <a href="{% url 'company-documents' company.id %}" class="btn btn-outline-primary rounded-pill mt-2">
+          <a href="{% url 'company-documents' company.id %}" 
+            class="btn btn-outline-primary rounded-pill mt-2 glass-btn-show-documents"]>
             Show Documents
           </a>
         </div>
@@ -52,18 +74,20 @@
 
   </div>
 
-  <!-- Second row: funny box -->
   <div class="row mt-4">
 
-    <div class="col-md-4">
-      <div class="card shadow-sm border-0 rounded-4 h-100">
+    {% comment %} <div class="col-md-4">
+      <div class="card glass-static shadow-sm border-0 rounded-4 h-100">
         <div class="card-body">
-          <h6 class="text-uppercase text-muted mb-3">Status</h6>
+          <h5 
+            class="text-uppercase text-white fw-semibold mb-3" 
+            style="text-shadow: 0 1px 2px rgba(0,0,0,0.4);">
+            Company status
+          </h5>
           <p class="mb-0 fw-bold text-success">Active</p>
           <p class="text-muted"><small>Updated: 2025-07-01</small></p>
         </div>
-      </div>
-
+      </div> {% endcomment %}
   </div>
 
 </div>
