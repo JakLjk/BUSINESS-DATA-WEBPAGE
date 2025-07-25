@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
 
@@ -28,15 +29,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG")
+DEBUG =  os.getenv("DEBUG", 'False').lower() in ('true', '1', 't')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "firmy.lejk.net"]
 
+CSRF_TRUSTED_ORIGINS = ["https://firmy.lejk.net"]
 
 # Application definition
 
 INSTALLED_APPS = [
-    'busers.apps.UsersConfig',
+    # 'users.apps.UsersConfig',
     'business_details.apps.BusinessDetailsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -47,6 +50,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'middleware.logging_middleware.RequestLoggingMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -137,8 +141,55 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT= os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "json":{
+            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
+            "format": "%(asctime)s %(levelname)s %(name)s %(message)s"
+        },
+        "console":{
+            "format": "[{asctime}] {levelname} {name}: {message}",
+            "style": "{"
+        }
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter":"console",
+            "level":os.getenv("CONSOLE_LOG_LEVEL", "DEBUG")
+        },
+        "json_file_log": {
+            "level": os.getenv("JSON_FILE_LOG_LEVEL", "INFO"),
+            "class": "logging.FileHandler",
+            "filename": BASE_DIR / "logs/app.json.log",
+            "formatter": "json",
+        },
+    },
+    "root": {
+        "handlers": ["console", "json_file_log"],
+        "level": os.getenv("DJANGO_LOG_LEVEL", "WARNING"),
+    },
+    "loggers": {
+        "log_main":{
+            "handlers":["console", "json_file_log"],
+            "level":os.getenv("MAIN_LOG_LEVEL", "DEBUG"),
+            "propagate":False
+        },
+        "django": {
+            "handlers": ["console", "json_file_log"],
+            "level": os.getenv("DJANGO_LOG_LEVEL", "WARNING"),
+            "propagate": False,
+        },
+    },
+}

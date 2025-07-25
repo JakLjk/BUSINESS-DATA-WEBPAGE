@@ -4,8 +4,10 @@ from django.db.models import Q
 
 import io
 from zipfile import ZipFile
-
+import logging
 from .models import CompanyInfo, KrsDfDocuments
+
+log = logging.getLogger("log_main")
 
 # Create your views here.
 def index(request):
